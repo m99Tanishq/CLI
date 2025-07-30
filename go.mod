@@ -1,6 +1,6 @@
 module github.com/m99Tanishq/glm-cli
 
-go 1.21
+go 1.22
 
 require (
 	github.com/spf13/cobra v1.8.0

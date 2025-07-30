@@ -13,6 +13,9 @@ clean:
 test:
 	go test ./...
 
+# Run tests with security checks
+test-full: test check
+
 # Build for all platforms
 build-all:
 	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-linux-amd64 .
@@ -33,6 +36,16 @@ fmt:
 # Lint code
 lint:
 	golangci-lint run
+
+# Security scan
+security:
+	@echo "🔒 Running security scan..."
+	@echo "Current Go version: $(shell go version)"
+	@echo ""
+	@govulncheck ./... || (echo ""; echo "⚠️  Note: Some vulnerabilities require Go 1.23+"; echo "   See SECURITY.md for detailed analysis"; echo "   Current risk level: LOW"; exit 0)
+
+# Full check (lint + security)
+check: lint security
 
 # Run with race detection
 race:

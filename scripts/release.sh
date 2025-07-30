@@ -44,9 +44,9 @@ fi
 echo "📥 Pulling latest changes..."
 git pull origin main
 
-# Run tests
-echo "🧪 Running tests..."
-make test
+# Run tests and security checks
+echo "🧪 Running tests and security checks..."
+make test-full
 
 # Build for all platforms
 echo "🔨 Building for all platforms..."
