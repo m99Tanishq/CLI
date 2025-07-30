@@ -12,9 +12,9 @@ var Version = "dev"
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number",
-	Long:  `Display the current version of glm-cli`,
+	Long:  `Display the current version of CLI`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("glm-cli version %s\n", Version)
+		fmt.Printf("CLI version %s\n", Version)
 	},
 }
 

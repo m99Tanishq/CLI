@@ -23,44 +23,44 @@ jobs:
 
       - name: Build for Linux
         run: |
-          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-linux-amd64 .
-          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-linux-arm64 .
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-linux-arm64 .
 
       - name: Build for macOS
         run: |
-          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-darwin-amd64 .
-          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-darwin-arm64 .
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-darwin-amd64 .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-darwin-arm64 .
 
       - name: Build for Windows
         run: |
-          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-windows-amd64.exe .
-          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o glm-cli-windows-arm64.exe .
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-windows-amd64.exe .
+          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=${{ steps.get_version.outputs.VERSION }}" -o CLI-windows-arm64.exe .
 
       - name: Generate checksums
         run: |
-          sha256sum glm-cli-linux-amd64 > glm-cli-linux-amd64.sha256
-          sha256sum glm-cli-linux-arm64 > glm-cli-linux-arm64.sha256
-          sha256sum glm-cli-darwin-amd64 > glm-cli-darwin-amd64.sha256
-          sha256sum glm-cli-darwin-arm64 > glm-cli-darwin-arm64.sha256
-          sha256sum glm-cli-windows-amd64.exe > glm-cli-windows-amd64.exe.sha256
-          sha256sum glm-cli-windows-arm64.exe > glm-cli-windows-arm64.exe.sha256
+          sha256sum CLI-linux-amd64 > CLI-linux-amd64.sha256
+          sha256sum CLI-linux-arm64 > CLI-linux-arm64.sha256
+          sha256sum CLI-darwin-amd64 > CLI-darwin-amd64.sha256
+          sha256sum CLI-darwin-arm64 > CLI-darwin-arm64.sha256
+          sha256sum CLI-windows-amd64.exe > CLI-windows-amd64.exe.sha256
+          sha256sum CLI-windows-arm64.exe > CLI-windows-arm64.exe.sha256
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            glm-cli-linux-amd64
-            glm-cli-linux-amd64.sha256
-            glm-cli-linux-arm64
-            glm-cli-linux-arm64.sha256
-            glm-cli-darwin-amd64
-            glm-cli-darwin-amd64.sha256
-            glm-cli-darwin-arm64
-            glm-cli-darwin-arm64.sha256
-            glm-cli-windows-amd64.exe
-            glm-cli-windows-amd64.exe.sha256
-            glm-cli-windows-arm64.exe
-            glm-cli-windows-arm64.exe.sha256
+            CLI-linux-amd64
+            CLI-linux-amd64.sha256
+            CLI-linux-arm64
+            CLI-linux-arm64.sha256
+            CLI-darwin-amd64
+            CLI-darwin-amd64.sha256
+            CLI-darwin-arm64
+            CLI-darwin-arm64.sha256
+            CLI-windows-amd64.exe
+            CLI-windows-amd64.exe.sha256
+            CLI-windows-arm64.exe
+            CLI-windows-arm64.exe.sha256
           draft: false
           prerelease: false
           generate_release_notes: true

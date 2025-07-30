@@ -44,7 +44,7 @@ func NewManager() *Manager {
 	}
 
 	return &Manager{
-		indexPath: filepath.Join(homeDir, ".glm-cli", "memory"),
+		indexPath: filepath.Join(homeDir, ".CLI", "memory"),
 	}
 }
 

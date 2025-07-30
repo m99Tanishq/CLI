@@ -99,5 +99,5 @@ func getConfigPath() string {
 	if err != nil {
 		homeDir = "."
 	}
-	return filepath.Join(homeDir, ".glm-cli")
+	return filepath.Join(homeDir, ".CLI")
 }

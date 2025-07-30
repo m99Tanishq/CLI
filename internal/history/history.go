@@ -37,7 +37,7 @@ func NewManager() *Manager {
 	}
 
 	return &Manager{
-		historyPath: filepath.Join(homeDir, ".glm-cli", "history"),
+		historyPath: filepath.Join(homeDir, ".CLI", "history"),
 	}
 }
 

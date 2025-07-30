@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/m99Tanishq/glm-cli/internal/api"
-	"github.com/m99Tanishq/glm-cli/internal/config"
-	"github.com/m99Tanishq/glm-cli/internal/memory"
+	"github.com/m99Tanishq/CLI/internal/api"
+	"github.com/m99Tanishq/CLI/internal/config"
+	"github.com/m99Tanishq/CLI/internal/memory"
 	"github.com/spf13/cobra"
 )
 
@@ -92,7 +92,7 @@ var queryCmd = &cobra.Command{
 		index, err := memManager.LoadIndex()
 		if err != nil {
 			fmt.Printf("Error loading index: %v\n", err)
-			fmt.Println("Please run 'glm-cli memory index' first")
+			fmt.Println("Please run 'CLI memory index' first")
 			return
 		}
 
@@ -159,7 +159,7 @@ var memoryListCmd = &cobra.Command{
 		index, err := memManager.LoadIndex()
 		if err != nil {
 			fmt.Println("No indexed codebases found.")
-			fmt.Println("Use 'glm-cli memory index' to index a codebase.")
+			fmt.Println("Use 'CLI memory index' to index a codebase.")
 			return
 		}
 

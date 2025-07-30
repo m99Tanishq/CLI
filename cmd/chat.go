@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/m99Tanishq/glm-cli/internal/api"
-	"github.com/m99Tanishq/glm-cli/internal/config"
-	"github.com/m99Tanishq/glm-cli/pkg/utils"
+	"github.com/m99Tanishq/CLI/internal/api"
+	"github.com/m99Tanishq/CLI/internal/config"
+	"github.com/m99Tanishq/CLI/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var chatCmd = &cobra.Command{
 		// Check if API key is set
 		if cfg.APIKey == "" {
 			fmt.Println("Error: API key not configured. Please set it using:")
-			fmt.Println("  glm-cli config --set api_key YOUR_API_KEY")
+			fmt.Println("  CLI config --set api_key YOUR_API_KEY")
 			return
 		}
 

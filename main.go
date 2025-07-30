@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/m99Tanishq/glm-cli/cmd"
+	"github.com/m99Tanishq/CLI/cmd"
 )
 
 func main() {

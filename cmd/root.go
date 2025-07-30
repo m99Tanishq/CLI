@@ -5,7 +5,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "glm-cli",
+	Use:   "CLI",
 	Short: "A CLI tool for interacting with GLM models",
 	Long: `GLM CLI is a command-line interface for interacting with GLM (General Language Model) APIs.
 It provides features for chat, configuration management, and conversation history.`,

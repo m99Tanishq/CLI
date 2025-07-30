@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Release script for glm-cli
+# Release script for CLI
 # Usage: ./scripts/release.sh <version>
 # Example: ./scripts/release.sh v1.0.0
 
@@ -62,8 +62,8 @@ git push origin $VERSION
 echo "✅ Release process started!"
 echo ""
 echo "📋 Next steps:"
-echo "1. Monitor the GitHub Actions workflow: https://github.com/m99Tanishq/glm-cli/actions"
+echo "1. Monitor the GitHub Actions workflow: https://github.com/m99Tanishq/CLI/actions"
 echo "2. Wait for the release workflow to complete"
-echo "3. Download the release from: https://github.com/m99Tanishq/glm-cli/releases"
+echo "3. Download the release from: https://github.com/m99Tanishq/CLI/releases"
 echo ""
 echo "🎉 Release $VERSION is being created automatically!" 

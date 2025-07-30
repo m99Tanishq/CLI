@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Installation script for glm-cli
-# This script installs glm-cli globally and sets up PATH
+# Installation script for CLI
+# This script installs CLI globally and sets up PATH
 
 set -e
 
-echo "🚀 Installing glm-cli..."
+echo "🚀 Installing CLI..."
 
 # Check if Go is installed
 if ! command -v go >/dev/null 2>&1; then
@@ -30,25 +30,25 @@ fi
 echo "📁 Installing to: $INSTALL_DIR"
 
 # Install the CLI
-echo "🔨 Building and installing glm-cli..."
+echo "🔨 Building and installing CLI..."
 go install .
 
 # Check if installation was successful
-if [ -f "$INSTALL_DIR/glm-cli" ]; then
-    echo "✅ glm-cli installed successfully!"
+if [ -f "$INSTALL_DIR/CLI" ]; then
+    echo "✅ CLI installed successfully!"
 else
     echo "❌ Installation failed"
     exit 1
 fi
 
 # Check if the binary is in PATH
-if command -v glm-cli >/dev/null 2>&1; then
-    echo "✅ glm-cli is available globally!"
+if command -v CLI >/dev/null 2>&1; then
+    echo "✅ CLI is available globally!"
     echo ""
     echo "🎉 Installation complete!"
-    echo "   Try running: glm-cli --help"
+    echo "   Try running: CLI --help"
 else
-    echo "⚠️  glm-cli is installed but not in PATH"
+    echo "⚠️  CLI is installed but not in PATH"
     echo ""
     echo "📝 To make it globally available, add this to your shell configuration:"
     echo ""
@@ -76,4 +76,4 @@ else
 fi
 
 echo ""
-echo "📚 For more information, visit: https://github.com/m99Tanishq/glm-cli" 
+echo "📚 For more information, visit: https://github.com/m99Tanishq/CLI" 

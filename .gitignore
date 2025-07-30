@@ -4,8 +4,8 @@
 *.dll
 *.so
 *.dylib
-glm-cli
-glm-cli-*
+CLI
+CLI-*
 
 # Test binary, built with `go test -c`
 *.test

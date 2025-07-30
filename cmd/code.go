@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/m99Tanishq/glm-cli/internal/api"
-	"github.com/m99Tanishq/glm-cli/internal/config"
+	"github.com/m99Tanishq/CLI/internal/api"
+	"github.com/m99Tanishq/CLI/internal/config"
 	"github.com/spf13/cobra"
 )
 

@@ -89,22 +89,22 @@ make clean
 ### Version Management
 ```bash
 # Check current version
-./glm-cli version
+./CLI version
 
 # Build with custom version
-go build -ldflags="-X github.com/m99Tanishq/glm-cli/cmd.Version=v1.0.0" -o glm-cli .
+go build -ldflags="-X github.com/m99Tanishq/CLI/cmd.Version=v1.0.0" -o CLI .
 ```
 
 ## 📦 Artifacts
 
 ### Release Artifacts
 Each release includes:
-- `glm-cli-linux-amd64` - Linux x64 binary
-- `glm-cli-linux-arm64` - Linux ARM64 binary
-- `glm-cli-darwin-amd64` - macOS x64 binary
-- `glm-cli-darwin-arm64` - macOS ARM64 binary
-- `glm-cli-windows-amd64.exe` - Windows x64 binary
-- `glm-cli-windows-arm64.exe` - Windows ARM64 binary
+- `CLI-linux-amd64` - Linux x64 binary
+- `CLI-linux-arm64` - Linux ARM64 binary
+- `CLI-darwin-amd64` - macOS x64 binary
+- `CLI-darwin-arm64` - macOS ARM64 binary
+- `CLI-windows-amd64.exe` - Windows x64 binary
+- `CLI-windows-arm64.exe` - Windows ARM64 binary
 - SHA256 checksums for all binaries
 
 ### Development Artifacts
@@ -119,9 +119,9 @@ Development builds are available as GitHub Actions artifacts for 30 days.
 
 ## 📊 Monitoring
 
-- **Workflow Status**: https://github.com/m99Tanishq/glm-cli/actions
-- **Releases**: https://github.com/m99Tanishq/glm-cli/releases
-- **Issues**: https://github.com/m99Tanishq/glm-cli/issues
+- **Workflow Status**: https://github.com/m99Tanishq/CLI/actions
+- **Releases**: https://github.com/m99Tanishq/CLI/releases
+- **Issues**: https://github.com/m99Tanishq/CLI/issues
 
 ## 🛠️ Troubleshooting
 
@@ -151,7 +151,7 @@ yamllint .github/workflows/*.yml
 make build-all
 
 # Verify version injection
-./glm-cli version
+./CLI version
 ```
 
 ## 📈 Future Enhancements

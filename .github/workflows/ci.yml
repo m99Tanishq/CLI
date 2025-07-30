@@ -36,12 +36,12 @@ jobs:
         run: go test -race ./...
 
       - name: Build
-        run: go build -o glm-cli .
+        run: go build -o CLI .
 
       - name: Verify build
         run: |
-          ./glm-cli --help
-          ./glm-cli version
+          ./CLI --help
+          ./CLI version
 
   lint:
     runs-on: ubuntu-latest

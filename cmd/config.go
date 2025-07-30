@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/m99Tanishq/glm-cli/internal/config"
+	"github.com/m99Tanishq/CLI/internal/config"
 	"github.com/spf13/cobra"
 )
 

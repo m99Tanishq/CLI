@@ -1,4 +1,4 @@
-module github.com/m99Tanishq/glm-cli
+module github.com/m99Tanishq/CLI
 
 go 1.22
 

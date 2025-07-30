@@ -2,12 +2,12 @@
 
 # Build the application
 build:
-	go build -o glm-cli .
+	go build -o CLI .
 
 # Clean build artifacts
 clean:
-	rm -f glm-cli
-	rm -f glm-cli-*
+	rm -f CLI
+	rm -f CLI-*
 
 # Run tests
 test:
@@ -18,17 +18,17 @@ test-full: test check
 
 # Build for all platforms
 build-all:
-	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-linux-amd64 .
-	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-linux-arm64 .
-	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-darwin-arm64 .
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-windows-amd64.exe .
-	GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/glm-cli/cmd.Version=dev" -o glm-cli-windows-arm64.exe .
+	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-linux-amd64 .
+	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-linux-arm64 .
+	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-darwin-arm64 .
+	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-windows-amd64.exe .
+	GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-windows-arm64.exe .
 
 # Install globally (to ~/go/bin/)
 install:
 	go install .
-	@echo "✅ glm-cli installed to $(shell go env GOPATH)/bin/"
+	@echo "✅ CLI installed to $(shell go env GOPATH)/bin/"
 	@echo "📝 Make sure $(shell go env GOPATH)/bin/ is in your PATH"
 	@echo "   Add this to your ~/.bashrc or ~/.zshrc:"
 	@echo "   export PATH=\$$PATH:$(shell go env GOPATH)/bin"
@@ -36,12 +36,12 @@ install:
 # Install with PATH check
 install-check: install
 	@echo ""
-	@echo "🔍 Checking if glm-cli is available globally..."
-	@if command -v glm-cli >/dev/null 2>&1; then \
-		echo "✅ glm-cli is available globally!"; \
-		glm-cli version; \
+	@echo "🔍 Checking if CLI is available globally..."
+	@if command -v CLI >/dev/null 2>&1; then \
+		echo "✅ CLI is available globally!"; \
+		CLI version; \
 	else \
-		echo "❌ glm-cli is not in PATH"; \
+		echo "❌ CLI is not in PATH"; \
 		echo "   Please add $(shell go env GOPATH)/bin to your PATH"; \
 		echo "   Or run: export PATH=\$$PATH:$(shell go env GOPATH)/bin"; \
 	fi
@@ -71,7 +71,7 @@ race:
 # Generate release
 release: build-all
 	@echo "Built binaries for all platforms:"
-	@ls -la glm-cli-*
+	@ls -la CLI-*
 
 # Development mode
 dev:

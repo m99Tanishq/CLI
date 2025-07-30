@@ -13,93 +13,25 @@ A powerful command-line interface for interacting with GLM (General Language Mod
 
 ## 📦 Installation
 
-### Option 1: Quick Install Script (Recommended)
+### Option 1: Build from Source
 
 ```bash
-# Clone the repository
-git clone https://github.com/m99Tanishq/glm-cli.git
-cd glm-cli
-
-# Run the installation script
-./scripts/install.sh
-```
-
-The script will:
-- ✅ Check if Go is installed
-- ✅ Install glm-cli globally
-- ✅ Verify the installation
-- ✅ Provide PATH setup instructions
-
-### Option 2: Go Install (Global)
-
-```bash
-# Install directly from GitHub
-go install github.com/m99Tanishq/glm-cli@latest
-
-# Make sure ~/go/bin is in your PATH
-export PATH="$PATH:$(go env GOPATH)/bin"
-```
-
-### Option 3: Direct Download
-
-1. **Download the latest release** for your platform:
-   - [Linux x64](https://github.com/m99Tanishq/glm-cli/releases/latest/download/glm-cli-linux-amd64)
-   - [macOS x64](https://github.com/m99Tanishq/glm-cli/releases/latest/download/glm-cli-darwin-amd64)
-   - [Windows x64](https://github.com/m99Tanishq/glm-cli/releases/latest/download/glm-cli-windows-amd64.exe)
-
-2. **Make it executable** (Linux/macOS):
-   ```bash
-   chmod +x glm-cli
-   ```
-
-3. **Move to your PATH**:
-   ```bash
-   # Linux/macOS (system-wide)
-   sudo mv glm-cli /usr/local/bin/
-   
-   # Or user-local installation
-   mkdir -p ~/.local/bin
-   mv glm-cli ~/.local/bin/
-   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-   source ~/.bashrc
-   ```
-
-### Option 4: Build from Source
-
-```bash
-git clone https://github.com/m99Tanishq/glm-cli.git
-cd glm-cli
+git clone https://github.com/m99Tanishq/CLI.git
+cd CLI
 
 # Build and install
 make install-check
 
 # Or build manually
-go build -o glm-cli .
-sudo mv glm-cli /usr/local/bin/
+go build -o CLI .
+sudo mv CLI /usr/local/bin/
+
+# set config manually
+CLI config --set api_key=YOUR_HF_TOKEN
+CLI config --set model=zai-org/GLM-4.5:novita
+CLI config --set base_url=https://router.huggingface.co/v1
 ```
 
-### 🔧 PATH Setup
-
-If glm-cli is not found after installation, add the appropriate directory to your PATH:
-
-**Note:** The installation script automatically detects your shell and provides the correct PATH setup instructions.
-
-**For Go install:**
-```bash
-# Add to ~/.bashrc, ~/.zshrc, or ~/.profile
-export PATH="$PATH:$(go env GOPATH)/bin"
-```
-
-**For user-local installation:**
-```bash
-# Add to ~/.bashrc, ~/.zshrc, or ~/.profile
-export PATH="$PATH:$HOME/.local/bin"
-```
-
-**Verify installation:**
-```bash
-glm-cli --version
-```
 
 ### 🗑️ Uninstallation
 
@@ -108,12 +40,12 @@ glm-cli --version
 ./scripts/uninstall.sh
 
 # If installed via go install
-rm $(go env GOPATH)/bin/glm-cli
+rm $(go env GOPATH)/bin/CLI
 
 # If installed manually
-sudo rm /usr/local/bin/glm-cli
+sudo rm /usr/local/bin/CLI
 # or
-rm ~/.local/bin/glm-cli
+rm ~/.local/bin/CLI
 ```
 
 ## 🔧 Setup
@@ -123,15 +55,9 @@ rm ~/.local/bin/glm-cli
    - Create an account and get your access token
    - Your token should start with `hf_`
 
-2. **Configure the CLI**:
+2. **Verify Configuration**:
    ```bash
-   ./glm-cli config --set api_key=YOUR_HF_TOKEN
-   ./glm-cli config --set model=zai-org/GLM-4.5:novita
-   ```
-
-3. **Verify Configuration**:
-   ```bash
-   ./glm-cli config --list
+   CLI config --list
    ```
 
 ## 🎯 Quick Start
@@ -139,52 +65,52 @@ rm ~/.local/bin/glm-cli
 ### Chat with AI
 ```bash
 # Start interactive chat
-./glm-cli chat
+CLI chat
 
 # Chat with specific model
-./glm-cli chat --model zai-org/GLM-4.5:novita
+CLI chat --model zai-org/GLM-4.5:novita
 ```
 
 ### File Operations
 ```bash
 # List files
-./glm-cli files list
+CLI files list
 
 # Read a file
-./glm-cli files read myfile.txt
+CLI files read myfile.txt
 
 # Create a file
-./glm-cli files create newfile.txt
+CLI files create newfile.txt
 
 # Write content
-./glm-cli files write newfile.txt "Hello World"
+CLI files write newfile.txt "Hello World"
 ```
 
 ### Code Analysis
 ```bash
 # Analyze code
-./glm-cli code analyze myfile.go
+CLI code analyze myfile.go
 
 # Fix code issues
-./glm-cli code fix myfile.go
+CLI code fix myfile.go
 
 # Code review
-./glm-cli code review myfile.go
+CLI code review myfile.go
 ```
 
 ### Memory System
 ```bash
 # Index a codebase
-./glm-cli memory index .
+CLI memory index .
 
 # Query the codebase
-./glm-cli memory query "What is the main function?"
+CLI memory query "What is the main function?"
 
 # List indexed data
-./glm-cli memory list
+CLI memory list
 
 # Analyze codebase
-./glm-cli memory analyze
+CLI memory analyze
 ```
 
 ## 📋 Commands
@@ -220,7 +146,7 @@ rm ~/.local/bin/glm-cli
 
 ## 🔑 Configuration
 
-The CLI stores configuration in `~/.glm-cli/config.json`:
+The CLI stores configuration in `~/.CLI/config.json`:
 
 ```json
 {
@@ -241,7 +167,7 @@ export GLM_MODEL=zai-org/GLM-4.5:novita
 ## 🏗️ Project Structure
 
 ```
-glm-cli/
+CLI/
 ├── cmd/           # Command implementations
 │   ├── chat.go    # Chat functionality
 │   ├── code.go    # Code analysis
@@ -270,9 +196,9 @@ glm-cli/
 
 ### Build
 ```bash
-git clone https://github.com/m99Tanishq/glm-cli.git
-cd glm-cli
-go build -o glm-cli .
+git clone https://github.com/m99Tanishq/CLI.git
+cd CLI
+go build -o CLI .
 ```
 
 ### Run Tests
@@ -283,13 +209,13 @@ go test ./...
 ### Cross-Platform Build
 ```bash
 # Linux
-GOOS=linux GOARCH=amd64 go build -o glm-cli-linux-amd64 .
+GOOS=linux GOARCH=amd64 go build -o CLI-linux-amd64 .
 
 # macOS
-GOOS=darwin GOARCH=amd64 go build -o glm-cli-darwin-amd64 .
+GOOS=darwin GOARCH=amd64 go build -o CLI-darwin-amd64 .
 
 # Windows
-GOOS=windows GOARCH=amd64 go build -o glm-cli-windows-amd64.exe .
+GOOS=windows GOARCH=amd64 go build -o CLI-windows-amd64.exe .
 ```
 
 ## 🚀 Deployment & CI/CD
@@ -360,10 +286,10 @@ The CLI includes version information that's injected during build:
 
 ```bash
 # Check version
-./glm-cli version
+CLI version
 
 # Build with custom version
-go build -ldflags="-X github.com/m99Tanishq/glm-cli/cmd.Version=v1.0.0" -o glm-cli .
+go build -ldflags="-X github.com/m99Tanishq/CLI/cmd.Version=v1.0.0" -o CLI .
 ```
 
 ## 🤝 Contributing
@@ -380,8 +306,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/m99Tanishq/glm-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/m99Tanishq/glm-cli/discussions)
+- **Issues**: [GitHub Issues](https://github.com/m99Tanishq/CLI/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/m99Tanishq/CLI/discussions)
 
 ## 🙏 Acknowledgments
 

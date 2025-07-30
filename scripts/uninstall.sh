@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Uninstall script for glm-cli
+# Uninstall script for CLI
 
 set -e
 
-echo "🗑️  Uninstalling glm-cli..."
+echo "🗑️  Uninstalling CLI..."
 
 # Get Go paths
 GOPATH=$(go env GOPATH)
@@ -17,17 +17,17 @@ else
     INSTALL_DIR="$GOBIN"
 fi
 
-BINARY_PATH="$INSTALL_DIR/glm-cli"
+BINARY_PATH="$INSTALL_DIR/CLI"
 
-echo "📁 Looking for glm-cli in: $INSTALL_DIR"
+echo "📁 Looking for CLI in: $INSTALL_DIR"
 
 # Check if the binary exists
 if [ -f "$BINARY_PATH" ]; then
-    echo "✅ Found glm-cli at: $BINARY_PATH"
+    echo "✅ Found CLI at: $BINARY_PATH"
     
     # Remove the binary
     rm "$BINARY_PATH"
-    echo "✅ Removed glm-cli binary"
+    echo "✅ Removed CLI binary"
     
     # Check if there are any other Go binaries in the directory
     if [ -z "$(ls -A "$INSTALL_DIR" 2>/dev/null)" ]; then
@@ -35,22 +35,22 @@ if [ -f "$BINARY_PATH" ]; then
         rmdir "$INSTALL_DIR"
     fi
 else
-    echo "❌ glm-cli not found at: $BINARY_PATH"
+    echo "❌ CLI not found at: $BINARY_PATH"
     
     # Try to find it elsewhere
-    if command -v glm-cli >/dev/null 2>&1; then
-        FOUND_PATH=$(which glm-cli)
-        echo "📍 Found glm-cli at: $FOUND_PATH"
+    if command -v CLI >/dev/null 2>&1; then
+        FOUND_PATH=$(which CLI)
+        echo "📍 Found CLI at: $FOUND_PATH"
         echo "   Please remove it manually:"
         echo "   sudo rm $FOUND_PATH"
     else
-        echo "✅ glm-cli is not installed or not in PATH"
+        echo "✅ CLI is not installed or not in PATH"
     fi
 fi
 
 echo ""
 echo "🧹 Cleaning up configuration files..."
-CONFIG_DIR="$HOME/.glm-cli"
+CONFIG_DIR="$HOME/.CLI"
 
 if [ -d "$CONFIG_DIR" ]; then
     echo "📁 Found config directory: $CONFIG_DIR"
