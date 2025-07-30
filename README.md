@@ -11,9 +11,70 @@ A powerful command-line interface for interacting with GLM (General Language Mod
 - **⚙️ Configuration**: Manage API keys and settings
 - **📚 History**: Track and manage chat conversations
 
+## 💻 System Requirements
+
+- **Operating Systems**: Linux, macOS, Windows
+- **Architectures**: AMD64 (x86_64), ARM64 (Apple Silicon, ARM64 Linux)
+- **Memory**: 50MB RAM minimum
+- **Network**: Internet connection for API access
+- **Dependencies**: None (statically linked binary)
+
 ## 📦 Installation
 
-### Option 1: Build from Source
+### Option 1: Download Latest Release
+
+Download the latest release for your platform:
+
+#### Linux
+```bash
+# AMD64
+wget https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-linux-amd64
+chmod +x CLI-linux-amd64
+sudo mv CLI-linux-amd64 /usr/local/bin/CLI
+
+# ARM64
+wget https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-linux-arm64
+chmod +x CLI-linux-arm64
+sudo mv CLI-linux-arm64 /usr/local/bin/CLI
+```
+
+#### macOS
+```bash
+# Intel Mac (AMD64)
+curl -L -o CLI https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-darwin-amd64
+chmod +x CLI
+sudo mv CLI /usr/local/bin/
+
+# Apple Silicon (ARM64)
+curl -L -o CLI https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-darwin-arm64
+chmod +x CLI
+sudo mv CLI /usr/local/bin/
+```
+
+#### Windows
+```powershell
+# AMD64
+Invoke-WebRequest -Uri "https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-windows-amd64.exe" -OutFile "CLI.exe"
+# Move CLI.exe to a directory in your PATH (e.g., C:\Windows\System32)
+
+# ARM64
+Invoke-WebRequest -Uri "https://github.com/m99Tanishq/CLI/releases/latest/download/CLI-windows-arm64.exe" -OutFile "CLI.exe"
+# Move CLI.exe to a directory in your PATH (e.g., C:\Windows\System32)
+```
+
+### Option 2: Quick Install Script
+
+```bash
+# Linux/macOS
+curl -fsSL https://raw.githubusercontent.com/m99Tanishq/CLI/main/scripts/install.sh | bash
+
+# Or run the script directly
+git clone https://github.com/m99Tanishq/CLI.git
+cd CLI
+./scripts/install.sh
+```
+
+### Option 3: Build from Source
 
 ```bash
 git clone https://github.com/m99Tanishq/CLI.git
@@ -32,6 +93,18 @@ CLI config --set model=zai-org/GLM-4.5:novita
 CLI config --set base_url=https://router.huggingface.co/v1
 ```
 
+
+### ✅ Verify Installation
+
+After installation, verify that CLI is working:
+
+```bash
+# Check version
+CLI version
+
+# Check if CLI is available
+which CLI
+```
 
 ### 🗑️ Uninstallation
 
@@ -59,6 +132,12 @@ rm ~/.local/bin/CLI
    ```bash
    CLI config --list
    ```
+
+## 📋 Release Notes
+
+- **Latest Release**: [v1.0.2](https://github.com/m99Tanishq/CLI/releases/latest)
+- **All Releases**: [GitHub Releases](https://github.com/m99Tanishq/CLI/releases)
+- **Changelog**: See release notes for detailed changes and improvements
 
 ## 🎯 Quick Start
 
