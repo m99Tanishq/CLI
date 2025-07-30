@@ -42,10 +42,18 @@ func Load() (*Config, error) {
 	// Read from environment variables
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("GLM")
-	viper.BindEnv("api_key", "GLM_API_KEY")
-	viper.BindEnv("model", "GLM_MODEL")
-	viper.BindEnv("base_url", "GLM_BASE_URL")
-	viper.BindEnv("max_history", "GLM_MAX_HISTORY")
+	if err := viper.BindEnv("api_key", "GLM_API_KEY"); err != nil {
+		return nil, fmt.Errorf("failed to bind api_key env: %w", err)
+	}
+	if err := viper.BindEnv("model", "GLM_MODEL"); err != nil {
+		return nil, fmt.Errorf("failed to bind model env: %w", err)
+	}
+	if err := viper.BindEnv("base_url", "GLM_BASE_URL"); err != nil {
+		return nil, fmt.Errorf("failed to bind base_url env: %w", err)
+	}
+	if err := viper.BindEnv("max_history", "GLM_MAX_HISTORY"); err != nil {
+		return nil, fmt.Errorf("failed to bind max_history env: %w", err)
+	}
 
 	// Read config file if it exists
 	if err := viper.ReadInConfig(); err != nil {
@@ -78,7 +86,7 @@ func Save(config *Config) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	if err := os.WriteFile(configFile, jsonData, 0644); err != nil {
+	if err := os.WriteFile(configFile, jsonData, 0600); err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}
 

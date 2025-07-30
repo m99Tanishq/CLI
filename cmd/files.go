@@ -49,7 +49,7 @@ var writeCmd = &cobra.Command{
 		filePath := args[0]
 		content := strings.Join(args[1:], " ")
 
-		err := os.WriteFile(filePath, []byte(content), 0644)
+		err := os.WriteFile(filePath, []byte(content), 0600)
 		if err != nil {
 			fmt.Printf("Error writing file: %v\n", err)
 			return

@@ -54,7 +54,7 @@ func (m *Manager) SaveSession(session *ChatSession) error {
 		return fmt.Errorf("failed to marshal session: %w", err)
 	}
 
-	if err := os.WriteFile(filename, jsonData, 0644); err != nil {
+	if err := os.WriteFile(filename, jsonData, 0600); err != nil {
 		return fmt.Errorf("failed to write session file: %w", err)
 	}
 

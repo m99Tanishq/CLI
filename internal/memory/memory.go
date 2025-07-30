@@ -185,7 +185,7 @@ func (m *Manager) saveIndex(index *CodebaseIndex) error {
 		return fmt.Errorf("failed to marshal index: %w", err)
 	}
 
-	if err := os.WriteFile(indexFile, jsonData, 0644); err != nil {
+	if err := os.WriteFile(indexFile, jsonData, 0600); err != nil {
 		return fmt.Errorf("failed to write index file: %w", err)
 	}
 

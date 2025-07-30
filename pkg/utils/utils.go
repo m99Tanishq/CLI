@@ -10,7 +10,10 @@ import (
 // GenerateID generates a random ID for chat sessions
 func GenerateID() string {
 	b := make([]byte, 16)
-	rand.Read(b)
+	if _, err := rand.Read(b); err != nil {
+		// Fallback to timestamp-based ID if crypto/rand fails
+		return fmt.Sprintf("%x", time.Now().UnixNano())
+	}
 	return fmt.Sprintf("%x", b)
 }
 

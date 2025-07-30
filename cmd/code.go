@@ -163,7 +163,10 @@ Return the corrected code in a code block.`, filePath, string(content))
 			// Ask if user wants to apply the fix
 			fmt.Print("\nDo you want to apply these changes? (y/n): ")
 			var response string
-			fmt.Scanln(&response)
+			if _, err := fmt.Scanln(&response); err != nil {
+				fmt.Printf("Error reading input: %v\n", err)
+				return
+			}
 
 			if strings.ToLower(response) == "y" || strings.ToLower(response) == "yes" {
 				// Extract code from response (simple approach)
@@ -176,7 +179,7 @@ Return the corrected code in a code block.`, filePath, string(content))
 						end := strings.LastIndex(responseContent, "```")
 						if end > start {
 							code := responseContent[start:end]
-							err := os.WriteFile(filePath, []byte(code), 0644)
+							err := os.WriteFile(filePath, []byte(code), 0600)
 							if err != nil {
 								fmt.Printf("Error writing fixed code: %v\n", err)
 								return
