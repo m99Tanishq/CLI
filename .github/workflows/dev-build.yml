@@ -17,7 +17,7 @@ jobs:
           go-version: '1.21'
 
       - name: Cache Go modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -49,7 +49,7 @@ jobs:
           sha256sum glm-cli-windows-arm64.exe > glm-cli-windows-arm64.exe.sha256
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: glm-cli-builds
           path: |
