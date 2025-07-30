@@ -1,0 +1,68 @@
+name: Development Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v ./...
+
+      - name: Build for all platforms
+        run: |
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o glm-cli-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o glm-cli-linux-arm64 .
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o glm-cli-darwin-amd64 .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o glm-cli-darwin-arm64 .
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o glm-cli-windows-amd64.exe .
+          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w" -o glm-cli-windows-arm64.exe .
+
+      - name: Generate checksums
+        run: |
+          sha256sum glm-cli-linux-amd64 > glm-cli-linux-amd64.sha256
+          sha256sum glm-cli-linux-arm64 > glm-cli-linux-arm64.sha256
+          sha256sum glm-cli-darwin-amd64 > glm-cli-darwin-amd64.sha256
+          sha256sum glm-cli-darwin-arm64 > glm-cli-darwin-arm64.sha256
+          sha256sum glm-cli-windows-amd64.exe > glm-cli-windows-amd64.exe.sha256
+          sha256sum glm-cli-windows-arm64.exe > glm-cli-windows-arm64.exe.sha256
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: glm-cli-builds
+          path: |
+            glm-cli-linux-amd64
+            glm-cli-linux-amd64.sha256
+            glm-cli-linux-arm64
+            glm-cli-linux-arm64.sha256
+            glm-cli-darwin-amd64
+            glm-cli-darwin-amd64.sha256
+            glm-cli-darwin-arm64
+            glm-cli-darwin-arm64.sha256
+            glm-cli-windows-amd64.exe
+            glm-cli-windows-amd64.exe.sha256
+            glm-cli-windows-arm64.exe
+            glm-cli-windows-arm64.exe.sha256
+          retention-days: 30 

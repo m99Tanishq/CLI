@@ -22,7 +22,7 @@ func NewClient(apiKey string) *Client {
 		BaseURL: "https://api.glm.com/v1",
 		APIKey:  apiKey,
 		HTTPClient: &http.Client{
-			Timeout: time.Second * 30,
+			Timeout: time.Second * 6000,
 		},
 	}
 }

@@ -21,4 +21,7 @@ func init() {
 	rootCmd.AddCommand(chatCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(historyCmd)
+	rootCmd.AddCommand(filesCmd)
+	rootCmd.AddCommand(codeCmd)
+	rootCmd.AddCommand(memoryCmd)
 }

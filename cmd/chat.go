@@ -41,7 +41,7 @@ var chatCmd = &cobra.Command{
 		// Validate model
 		if !utils.IsValidModel(model) {
 			fmt.Printf("Warning: Unknown model '%s'. Using default model.\n", model)
-			model = "glm-4"
+			model = "zai-org/GLM-4.5:novita"
 		}
 
 		// Create API client
@@ -113,6 +113,6 @@ var chatCmd = &cobra.Command{
 }
 
 func init() {
-	chatCmd.Flags().StringP("model", "m", "glm-4", "Model to use for chat")
+	chatCmd.Flags().StringP("model", "m", "zai-org/GLM-4.5:novita", "Model to use for chat")
 	chatCmd.Flags().BoolP("stream", "s", false, "Enable streaming responses")
 }
