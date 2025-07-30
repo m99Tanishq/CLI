@@ -13,7 +13,34 @@ A powerful command-line interface for interacting with GLM (General Language Mod
 
 ## 📦 Installation
 
-### Option 1: Direct Download (Recommended)
+### Option 1: Quick Install Script (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/m99Tanishq/glm-cli.git
+cd glm-cli
+
+# Run the installation script
+./scripts/install.sh
+```
+
+The script will:
+- ✅ Check if Go is installed
+- ✅ Install glm-cli globally
+- ✅ Verify the installation
+- ✅ Provide PATH setup instructions
+
+### Option 2: Go Install (Global)
+
+```bash
+# Install directly from GitHub
+go install github.com/m99Tanishq/glm-cli@latest
+
+# Make sure ~/go/bin is in your PATH
+export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+### Option 3: Direct Download
 
 1. **Download the latest release** for your platform:
    - [Linux x64](https://github.com/m99Tanishq/glm-cli/releases/latest/download/glm-cli-linux-amd64)
@@ -25,29 +52,68 @@ A powerful command-line interface for interacting with GLM (General Language Mod
    chmod +x glm-cli
    ```
 
-3. **Move to your PATH** (optional):
+3. **Move to your PATH**:
    ```bash
-   # Linux/macOS
+   # Linux/macOS (system-wide)
    sudo mv glm-cli /usr/local/bin/
    
-   # Or add to your local bin
+   # Or user-local installation
    mkdir -p ~/.local/bin
    mv glm-cli ~/.local/bin/
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
    ```
 
-### Option 2: Go Install
-
-```bash
-go install github.com/m99Tanishq/glm-cli@latest
-```
-
-### Option 3: Build from Source
+### Option 4: Build from Source
 
 ```bash
 git clone https://github.com/m99Tanishq/glm-cli.git
 cd glm-cli
+
+# Build and install
+make install-check
+
+# Or build manually
 go build -o glm-cli .
+sudo mv glm-cli /usr/local/bin/
+```
+
+### 🔧 PATH Setup
+
+If glm-cli is not found after installation, add the appropriate directory to your PATH:
+
+**Note:** The installation script automatically detects your shell and provides the correct PATH setup instructions.
+
+**For Go install:**
+```bash
+# Add to ~/.bashrc, ~/.zshrc, or ~/.profile
+export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+**For user-local installation:**
+```bash
+# Add to ~/.bashrc, ~/.zshrc, or ~/.profile
+export PATH="$PATH:$HOME/.local/bin"
+```
+
+**Verify installation:**
+```bash
+glm-cli --version
+```
+
+### 🗑️ Uninstallation
+
+```bash
+# If installed via the install script
+./scripts/uninstall.sh
+
+# If installed via go install
+rm $(go env GOPATH)/bin/glm-cli
+
+# If installed manually
+sudo rm /usr/local/bin/glm-cli
+# or
+rm ~/.local/bin/glm-cli
 ```
 
 ## 🔧 Setup
