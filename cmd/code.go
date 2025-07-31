@@ -7,54 +7,48 @@ import (
 
 	"github.com/m99Tanishq/CLI/internal/api"
 	"github.com/m99Tanishq/CLI/internal/config"
+	"github.com/m99Tanishq/CLI/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var codeCmd = &cobra.Command{
 	Use:   "code",
-	Short: "Analyze and fix code with AI",
-	Long:  `Use AI to analyze code files, find issues, and suggest fixes.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Code analysis commands:")
-		fmt.Println("  analyze <file>  - Analyze code and find issues")
-		fmt.Println("  fix <file>      - Fix code issues with AI")
-		fmt.Println("  review <file>   - Code review with AI")
-		fmt.Println("  optimize <file> - Optimize code performance")
-		fmt.Println("  explain <file>  - Explain code functionality")
-	},
+	Short: "Code analysis and generation",
+	Long:  `Analyze, fix, review, and generate code using AI.`,
 }
 
 var analyzeCmd = &cobra.Command{
 	Use:   "analyze [file]",
-	Short: "Analyze code and find issues",
+	Short: "Analyze code with AI",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
 		filePath := args[0]
 
-		// Read file content
 		content, err := os.ReadFile(filePath)
 		if err != nil {
-			fmt.Printf("Error reading file: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error reading file: %v", err))
 			return
 		}
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
+			ui.PrintError("Failed to load configuration")
 			return
 		}
 
 		if cfg.APIKey == "" {
-			fmt.Println("Error: API key not configured")
+			ui.PrintError("API key not configured")
+			ui.PrintInfo("Please run: CLI config set api_key YOUR_HUGGING_FACE_API_KEY")
 			return
 		}
 
-		// Create API client
-		client := api.NewClient(cfg.APIKey)
-		client.BaseURL = cfg.BaseURL
+		client := api.NewClient(cfg.APIKey, cfg.BaseURL)
 
-		// Prepare analysis prompt
+		ui.PrintHeader("Code Analysis")
+		ui.PrintInfo(fmt.Sprintf("Analyzing: %s", filePath))
+		ui.PrintLoading("Processing code analysis...")
+
 		prompt := fmt.Sprintf(`Please analyze this code file and identify any issues, bugs, or areas for improvement:
 
 File: %s
@@ -80,16 +74,15 @@ Format your response clearly with sections.`, filePath, string(content))
 			},
 		}
 
-		fmt.Printf("Analyzing %s...\n", filePath)
 		resp, err := client.SendChat(req)
 		if err != nil {
-			fmt.Printf("Error analyzing code: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error analyzing code: %v", err))
 			return
 		}
 
 		if len(resp.Choices) > 0 {
-			fmt.Println("\n=== Code Analysis ===")
-			fmt.Println(resp.Choices[0].Message.Content)
+			ui.PrintSection("Analysis Results")
+			ui.PrintCard("Code Analysis Report", resp.Choices[0].Message.Content)
 		}
 	},
 }
@@ -99,32 +92,33 @@ var fixCmd = &cobra.Command{
 	Short: "Fix code issues with AI",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
 		filePath := args[0]
 
-		// Read file content
 		content, err := os.ReadFile(filePath)
 		if err != nil {
-			fmt.Printf("Error reading file: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error reading file: %v", err))
 			return
 		}
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
+			ui.PrintError("Failed to load configuration")
 			return
 		}
 
 		if cfg.APIKey == "" {
-			fmt.Println("Error: API key not configured")
+			ui.PrintError("API key not configured")
+			ui.PrintInfo("Please run: CLI config set api_key YOUR_HUGGING_FACE_API_KEY")
 			return
 		}
 
-		// Create API client
-		client := api.NewClient(cfg.APIKey)
-		client.BaseURL = cfg.BaseURL
+		client := api.NewClient(cfg.APIKey, cfg.BaseURL)
 
-		// Prepare fix prompt
+		ui.PrintHeader("Code Fix")
+		ui.PrintInfo(fmt.Sprintf("Fixing issues in: %s", filePath))
+		ui.PrintLoading("Analyzing and fixing code...")
+
 		prompt := fmt.Sprintf(`Please analyze and fix any issues in this code file. Return the corrected code:
 
 File: %s
@@ -149,30 +143,26 @@ Return the corrected code in a code block.`, filePath, string(content))
 			},
 		}
 
-		fmt.Printf("Fixing issues in %s...\n", filePath)
 		resp, err := client.SendChat(req)
 		if err != nil {
-			fmt.Printf("Error fixing code: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error fixing code: %v", err))
 			return
 		}
 
 		if len(resp.Choices) > 0 {
-			fmt.Println("\n=== Fixed Code ===")
-			fmt.Println(resp.Choices[0].Message.Content)
+			ui.PrintSection("Fixed Code")
+			ui.PrintCard("Code Fix Results", resp.Choices[0].Message.Content)
 
-			// Ask if user wants to apply the fix
-			fmt.Print("\nDo you want to apply these changes? (y/n): ")
+			ui.PrintPrompt("Do you want to apply these changes? (y/n): ")
 			var response string
 			if _, err := fmt.Scanln(&response); err != nil {
-				fmt.Printf("Error reading input: %v\n", err)
+				ui.PrintError("Error reading input")
 				return
 			}
 
 			if strings.ToLower(response) == "y" || strings.ToLower(response) == "yes" {
-				// Extract code from response (simple approach)
 				responseContent := resp.Choices[0].Message.Content
 				if strings.Contains(responseContent, "```") {
-					// Extract code between code blocks
 					start := strings.Index(responseContent, "```")
 					if start != -1 {
 						start = strings.Index(responseContent[start:], "\n") + start + 1
@@ -181,10 +171,10 @@ Return the corrected code in a code block.`, filePath, string(content))
 							code := responseContent[start:end]
 							err := os.WriteFile(filePath, []byte(code), 0600)
 							if err != nil {
-								fmt.Printf("Error writing fixed code: %v\n", err)
+								ui.PrintError(fmt.Sprintf("Error writing fixed code: %v", err))
 								return
 							}
-							fmt.Printf("Successfully applied fixes to %s\n", filePath)
+							ui.PrintSuccess(fmt.Sprintf("Successfully applied fixes to %s", filePath))
 						}
 					}
 				}
@@ -198,32 +188,33 @@ var reviewCmd = &cobra.Command{
 	Short: "Code review with AI",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
 		filePath := args[0]
 
-		// Read file content
 		content, err := os.ReadFile(filePath)
 		if err != nil {
-			fmt.Printf("Error reading file: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error reading file: %v", err))
 			return
 		}
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
+			ui.PrintError("Failed to load configuration")
 			return
 		}
 
 		if cfg.APIKey == "" {
-			fmt.Println("Error: API key not configured")
+			ui.PrintError("API key not configured")
+			ui.PrintInfo("Please run: CLI config set api_key YOUR_HUGGING_FACE_API_KEY")
 			return
 		}
 
-		// Create API client
-		client := api.NewClient(cfg.APIKey)
-		client.BaseURL = cfg.BaseURL
+		client := api.NewClient(cfg.APIKey, cfg.BaseURL)
 
-		// Prepare review prompt
+		ui.PrintHeader("Code Review")
+		ui.PrintInfo(fmt.Sprintf("Reviewing: %s", filePath))
+		ui.PrintLoading("Performing comprehensive code review...")
+
 		prompt := fmt.Sprintf(`Please perform a comprehensive code review of this file:
 
 File: %s
@@ -251,16 +242,15 @@ Format your response as a professional code review.`, filePath, string(content))
 			},
 		}
 
-		fmt.Printf("Reviewing %s...\n", filePath)
 		resp, err := client.SendChat(req)
 		if err != nil {
-			fmt.Printf("Error reviewing code: %v\n", err)
+			ui.PrintError(fmt.Sprintf("Error reviewing code: %v", err))
 			return
 		}
 
 		if len(resp.Choices) > 0 {
-			fmt.Println("\n=== Code Review ===")
-			fmt.Println(resp.Choices[0].Message.Content)
+			ui.PrintSection("Code Review Results")
+			ui.PrintCard("Review Report", resp.Choices[0].Message.Content)
 		}
 	},
 }

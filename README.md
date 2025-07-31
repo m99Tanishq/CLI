@@ -86,11 +86,6 @@ make install-check
 # Or build manually
 go build -o CLI .
 sudo mv CLI /usr/local/bin/
-
-# set config manually
-CLI config --set api_key=YOUR_HF_TOKEN
-CLI config --set model=zai-org/GLM-4.5:novita
-CLI config --set base_url=https://router.huggingface.co/v1
 ```
 
 
@@ -123,19 +118,20 @@ rm ~/.local/bin/CLI
 
 ## 🔧 Setup
 
-1. **Get a Hugging Face API Token**:
-   - Go to [Hugging Face](https://huggingface.co/)
-   - Create an account and get your access token
-   - Your token should start with `hf_`
+1. **Set up Deployed LLM (Ollama)**:
+   - Run Ollama server.
+   - Set BaseURL to your endpoint.
 
-2. **Verify Configuration**:
+2. **Configure CLI**:
    ```bash
+   CLI config --set base_url https://your-deployed-url
+   CLI config --set model phi3:mini
    CLI config --list
    ```
 
 ## 📋 Release Notes
 
-- **Latest Release**: [v1.0.2](https://github.com/m99Tanishq/CLI/releases/latest)
+- **Latest Release**: [v1.0.1](https://github.com/m99Tanishq/CLI/releases/latest)
 - **All Releases**: [GitHub Releases](https://github.com/m99Tanishq/CLI/releases)
 - **Changelog**: See release notes for detailed changes and improvements
 
@@ -147,7 +143,7 @@ rm ~/.local/bin/CLI
 CLI chat
 
 # Chat with specific model
-CLI chat --model zai-org/GLM-4.5:novita
+CLI chat --model phi3:mini
 ```
 
 ### File Operations
@@ -284,116 +280,3 @@ go build -o CLI .
 ```bash
 go test ./...
 ```
-
-### Cross-Platform Build
-```bash
-# Linux
-GOOS=linux GOARCH=amd64 go build -o CLI-linux-amd64 .
-
-# macOS
-GOOS=darwin GOARCH=amd64 go build -o CLI-darwin-amd64 .
-
-# Windows
-GOOS=windows GOARCH=amd64 go build -o CLI-windows-amd64.exe .
-```
-
-## 🚀 Deployment & CI/CD
-
-This project uses GitHub Actions for automated builds, testing, and releases.
-
-### Workflows
-
-#### 1. **CI Pipeline** (`.github/workflows/ci.yml`)
-- **Triggers**: Push to `main`/`develop`, Pull Requests
-- **Jobs**:
-  - **Test**: Runs unit tests, race detection, and build verification
-  - **Lint**: Code linting with golangci-lint
-  - **Security**: Vulnerability scanning with govulncheck
-
-#### 2. **Development Build** (`.github/workflows/dev-build.yml`)
-- **Triggers**: Push to `main` branch
-- **Actions**:
-  - Builds for all platforms (Linux, macOS, Windows - AMD64/ARM64)
-  - Generates SHA256 checksums
-  - Uploads artifacts for 30-day retention
-
-#### 3. **Release** (`.github/workflows/release.yml`)
-- **Triggers**: Push tags starting with `v*` (e.g., `v1.0.0`)
-- **Actions**:
-  - Builds optimized binaries for all platforms
-  - Injects version information into binaries
-  - Generates SHA256 checksums for security
-  - Creates GitHub release with all artifacts
-  - Auto-generates release notes
-
-### Creating a Release
-
-1. **Update version** in your code
-2. **Create and push a tag**:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
-3. **Monitor the release workflow** in GitHub Actions
-4. **Download artifacts** from the generated release
-
-### Local Development
-
-```bash
-# Build for current platform
-make build
-
-# Build for all platforms
-make build-all
-
-# Run tests
-make test
-
-# Format code
-make fmt
-
-# Lint code
-make lint
-
-# Clean build artifacts
-make clean
-```
-
-### Version Management
-
-The CLI includes version information that's injected during build:
-
-```bash
-# Check version
-CLI version
-
-# Build with custom version
-go build -ldflags="-X github.com/m99Tanishq/CLI/cmd.Version=v1.0.0" -o CLI .
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Issues**: [GitHub Issues](https://github.com/m99Tanishq/CLI/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/m99Tanishq/CLI/discussions)
-
-## 🙏 Acknowledgments
-
-- Built with [Cobra](https://github.com/spf13/cobra) CLI framework
-- Powered by [GLM-4.5](https://huggingface.co/zai-org/GLM-4.5) model
-- API access via [Hugging Face](https://huggingface.co/)
-
----
-
-**Made with ❤️ for the developer community** 

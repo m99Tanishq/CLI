@@ -4,13 +4,14 @@ import (
 	"time"
 )
 
-// ChatRequest represents a request to the GLM API
+// ChatRequest represents a request to the LLM API
 type ChatRequest struct {
 	Model       string    `json:"model"`
 	Messages    []Message `json:"messages"`
 	Stream      bool      `json:"stream,omitempty"`
 	MaxTokens   int       `json:"max_tokens,omitempty"`
 	Temperature float64   `json:"temperature,omitempty"`
+	// Removed Provider field
 }
 
 // ChatResponse represents a response from the GLM API
@@ -55,8 +56,8 @@ type ChatSession struct {
 
 // Config represents application configuration
 type Config struct {
-	APIKey      string  `json:"api_key" mapstructure:"api_key"`
 	Model       string  `json:"model" mapstructure:"model"`
+	APIKey      string  `json:"api_key" mapstructure:"api_key"`
 	BaseURL     string  `json:"base_url" mapstructure:"base_url"`
 	MaxHistory  int     `json:"max_history" mapstructure:"max_history"`
 	MaxTokens   int     `json:"max_tokens" mapstructure:"max_tokens"`

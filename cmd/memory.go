@@ -34,7 +34,6 @@ var indexCmd = &cobra.Command{
 			path = args[0]
 		}
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
@@ -43,17 +42,16 @@ var indexCmd = &cobra.Command{
 
 		if cfg.APIKey == "" {
 			fmt.Println("Error: API key not configured")
+			fmt.Println("Please run: CLI config set api_key YOUR_HUGGING_FACE_API_KEY")
 			return
 		}
 
-		// Create memory manager
 		memManager := memory.NewManager()
 
 		fmt.Printf("Indexing codebase at: %s\n", path)
 		fmt.Println("This may take a while for large codebases...")
 
-		// Index the codebase
-		index, err := memManager.IndexCodebase(path)
+		index, err := memManager.IndexCodebase(path, cfg.Model)
 		if err != nil {
 			fmt.Printf("Error indexing codebase: %v\n", err)
 			return
@@ -73,22 +71,14 @@ var queryCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		query := args[0]
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
 		}
 
-		if cfg.APIKey == "" {
-			fmt.Println("Error: API key not configured")
-			return
-		}
-
-		// Create memory manager
 		memManager := memory.NewManager()
 
-		// Load indexed data
 		index, err := memManager.LoadIndex()
 		if err != nil {
 			fmt.Printf("Error loading index: %v\n", err)
@@ -96,11 +86,8 @@ var queryCmd = &cobra.Command{
 			return
 		}
 
-		// Create API client
-		client := api.NewClient(cfg.APIKey)
-		client.BaseURL = cfg.BaseURL
+		client := api.NewClient(cfg.APIKey, cfg.BaseURL)
 
-		// Prepare query with context
 		prompt := fmt.Sprintf(`You have access to an indexed codebase. Please answer the following query based on the codebase information:
 
 Query: %s
@@ -215,7 +202,6 @@ var memoryAnalyzeCmd = &cobra.Command{
 			path = args[0]
 		}
 
-		// Load configuration
 		cfg, err := config.Load()
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
@@ -224,28 +210,20 @@ var memoryAnalyzeCmd = &cobra.Command{
 
 		if cfg.APIKey == "" {
 			fmt.Println("Error: API key not configured")
+			fmt.Println("Please run: CLI config set api_key YOUR_HUGGING_FACE_API_KEY")
 			return
 		}
 
-		// Create memory manager
 		memManager := memory.NewManager()
 
-		// Load or create index
-		index, err := memManager.LoadIndex()
+		index, err := memManager.IndexCodebase(path, cfg.Model)
 		if err != nil {
-			fmt.Println("No existing index found. Creating new index...")
-			index, err = memManager.IndexCodebase(path)
-			if err != nil {
-				fmt.Printf("Error indexing codebase: %v\n", err)
-				return
-			}
+			fmt.Printf("Error indexing codebase: %v\n", err)
+			return
 		}
 
-		// Create API client
-		client := api.NewClient(cfg.APIKey)
-		client.BaseURL = cfg.BaseURL
+		client := api.NewClient(cfg.APIKey, cfg.BaseURL)
 
-		// Prepare analysis prompt
 		prompt := fmt.Sprintf(`Please provide a comprehensive analysis of this codebase based on the indexed information:
 
 Codebase Overview:
@@ -312,7 +290,6 @@ func init() {
 	memoryCmd.AddCommand(memoryAnalyzeCmd)
 }
 
-// Helper functions for formatting
 func formatBytes(bytes int64) string {
 	const unit = 1024
 	if bytes < unit {
@@ -342,9 +319,8 @@ func formatFileStructure(files []memory.FileInfo) string {
 func formatKeyFiles(files []memory.FileInfo) string {
 	var result strings.Builder
 	for _, file := range files {
-		if !file.IsDir && isKeyFile(file.Name) {
-			result.WriteString(fmt.Sprintf("- %s (%s, %d lines): %s\n",
-				file.Path, file.Language, file.Lines, file.Purpose))
+		if isKeyFile(file.Name) {
+			result.WriteString(fmt.Sprintf("- %s: %s\n", file.Name, file.Purpose))
 		}
 	}
 	return result.String()
@@ -354,8 +330,7 @@ func formatDetailedFiles(files []memory.FileInfo) string {
 	var result strings.Builder
 	for _, file := range files {
 		if !file.IsDir {
-			result.WriteString(fmt.Sprintf("- %s (%s, %d lines)\n",
-				file.Path, file.Language, file.Lines))
+			result.WriteString(fmt.Sprintf("- %s (%s): %s\n", file.Name, file.Language, file.Purpose))
 		}
 	}
 	return result.String()
@@ -363,12 +338,12 @@ func formatDetailedFiles(files []memory.FileInfo) string {
 
 func isKeyFile(filename string) bool {
 	keyFiles := []string{
-		"main.go", "go.mod", "package.json", "requirements.txt", "Dockerfile",
-		"README.md", "Makefile", "CMakeLists.txt", "pom.xml", "build.gradle",
-		"setup.py", "Cargo.toml", "composer.json", "Gemfile", "pubspec.yaml",
+		"main.go", "go.mod", "go.sum", "Makefile", "README.md", "Dockerfile",
+		"package.json", "requirements.txt", "Cargo.toml", "pom.xml",
+		"build.gradle", "Gemfile", "composer.json", "pubspec.yaml",
 	}
-	for _, key := range keyFiles {
-		if filename == key {
+	for _, keyFile := range keyFiles {
+		if filename == keyFile {
 			return true
 		}
 	}

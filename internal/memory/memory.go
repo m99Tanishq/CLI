@@ -7,9 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/m99Tanishq/CLI/internal/api"
+	"github.com/m99Tanishq/CLI/internal/config"
 )
 
-// FileInfo represents information about a file in the codebase
 type FileInfo struct {
 	Path     string `json:"path"`
 	Name     string `json:"name"`
@@ -20,7 +22,6 @@ type FileInfo struct {
 	Purpose  string `json:"purpose"`
 }
 
-// CodebaseIndex represents the indexed information about a codebase
 type CodebaseIndex struct {
 	RootPath    string     `json:"root_path"`
 	Files       []FileInfo `json:"files"`
@@ -29,14 +30,13 @@ type CodebaseIndex struct {
 	Languages   []string   `json:"languages"`
 	MemorySize  int64      `json:"memory_size"`
 	LastUpdated time.Time  `json:"last_updated"`
+	Model       string     `json:"model"`
 }
 
-// Manager handles codebase indexing and memory operations
 type Manager struct {
 	indexPath string
 }
 
-// NewManager creates a new memory manager
 func NewManager() *Manager {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -48,9 +48,7 @@ func NewManager() *Manager {
 	}
 }
 
-// IndexCodebase indexes a codebase and stores the information
-func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
-	// Create memory directory if it doesn't exist
+func (m *Manager) IndexCodebase(rootPath string, model string) (*CodebaseIndex, error) {
 	if err := os.MkdirAll(m.indexPath, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create memory directory: %w", err)
 	}
@@ -60,27 +58,19 @@ func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
 		Files:       []FileInfo{},
 		Languages:   []string{},
 		LastUpdated: time.Now(),
+		Model:       model,
 	}
 
-	// Walk through the codebase
+	allowedHidden := map[string]bool{".gitignore": true, ".env": true, ".dockerignore": true}
+	skipDirs := map[string]bool{".git": true, "node_modules": true, "vendor": true, "bin": true, "obj": true, "build": true, "dist": true}
+
 	err := filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Skip hidden files and directories (but allow some important ones)
 		if strings.HasPrefix(info.Name(), ".") {
-			// Allow some important hidden files
-			allowedHidden := []string{".gitignore", ".env", ".dockerignore"}
-			isAllowed := false
-			for _, allowed := range allowedHidden {
-				if info.Name() == allowed {
-					isAllowed = true
-					break
-				}
-			}
-
-			if !isAllowed {
+			if !allowedHidden[info.Name()] {
 				if info.IsDir() {
 					return filepath.SkipDir
 				}
@@ -88,17 +78,10 @@ func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
 			}
 		}
 
-		// Skip common directories to ignore
-		skipDirs := []string{".git", "node_modules", "vendor", "bin", "obj", "build", "dist"}
-		if info.IsDir() {
-			for _, skipDir := range skipDirs {
-				if info.Name() == skipDir {
-					return filepath.SkipDir
-				}
-			}
+		if info.IsDir() && skipDirs[info.Name()] {
+			return filepath.SkipDir
 		}
 
-		// Calculate relative path
 		relPath, err := filepath.Rel(rootPath, path)
 		if err != nil {
 			relPath = path
@@ -112,12 +95,10 @@ func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
 		}
 
 		if !info.IsDir() {
-			// Determine language and count lines
 			fileInfo.Language = m.detectLanguage(info.Name())
 			fileInfo.Lines = m.countLines(path)
 			fileInfo.Purpose = m.determinePurpose(info.Name(), relPath)
 
-			// Add language to list if not already present
 			if fileInfo.Language != "" {
 				found := false
 				for _, lang := range index.Languages {
@@ -146,7 +127,6 @@ func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
 		return nil, fmt.Errorf("failed to walk codebase: %w", err)
 	}
 
-	// Save the index
 	if err := m.saveIndex(index); err != nil {
 		return nil, fmt.Errorf("failed to save index: %w", err)
 	}
@@ -154,45 +134,40 @@ func (m *Manager) IndexCodebase(rootPath string) (*CodebaseIndex, error) {
 	return index, nil
 }
 
-// LoadIndex loads the stored codebase index
 func (m *Manager) LoadIndex() (*CodebaseIndex, error) {
-	indexFile := filepath.Join(m.indexPath, "codebase_index.json")
-
-	data, err := os.ReadFile(indexFile)
+	indexPath := filepath.Join(m.indexPath, "index.json")
+	data, err := os.ReadFile(indexPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read index file: %w", err)
 	}
 
 	var index CodebaseIndex
 	if err := json.Unmarshal(data, &index); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal index: %w", err)
+		return nil, fmt.Errorf("failed to parse index file: %w", err)
 	}
 
 	return &index, nil
 }
 
-// ClearIndex removes all indexed data
 func (m *Manager) ClearIndex() error {
-	return os.RemoveAll(m.indexPath)
+	indexPath := filepath.Join(m.indexPath, "index.json")
+	return os.Remove(indexPath)
 }
 
-// saveIndex saves the codebase index to disk
 func (m *Manager) saveIndex(index *CodebaseIndex) error {
-	indexFile := filepath.Join(m.indexPath, "codebase_index.json")
-
-	jsonData, err := json.MarshalIndent(index, "", "  ")
+	indexPath := filepath.Join(m.indexPath, "index.json")
+	data, err := json.MarshalIndent(index, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal index: %w", err)
 	}
 
-	if err := os.WriteFile(indexFile, jsonData, 0600); err != nil {
+	if err := os.WriteFile(indexPath, data, 0644); err != nil {
 		return fmt.Errorf("failed to write index file: %w", err)
 	}
 
 	return nil
 }
 
-// detectLanguage determines the programming language based on file extension
 func (m *Manager) detectLanguage(filename string) string {
 	ext := strings.ToLower(filepath.Ext(filename))
 
@@ -238,21 +213,13 @@ func (m *Manager) detectLanguage(filename string) string {
 		return lang
 	}
 
-	// Special cases for files without extensions
-	if filename == "Dockerfile" {
-		return "Dockerfile"
-	}
-	if filename == "Makefile" {
-		return "Makefile"
-	}
-	if filename == "README" {
+	if filename == "Dockerfile" || filename == "Makefile" || filename == "README" {
 		return "Markdown"
 	}
 
 	return "Unknown"
 }
 
-// countLines counts the number of lines in a file
 func (m *Manager) countLines(filepath string) int {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
@@ -263,12 +230,10 @@ func (m *Manager) countLines(filepath string) int {
 	return len(lines)
 }
 
-// determinePurpose determines the purpose of a file based on its name and path
 func (m *Manager) determinePurpose(filename, path string) string {
 	lowerName := strings.ToLower(filename)
 	lowerPath := strings.ToLower(path)
 
-	// Configuration files
 	if strings.Contains(lowerName, "config") || strings.Contains(lowerPath, "config") {
 		return "Configuration"
 	}
@@ -276,7 +241,6 @@ func (m *Manager) determinePurpose(filename, path string) string {
 		return "Settings"
 	}
 
-	// Build and dependency files
 	if strings.Contains(lowerName, "package.json") || strings.Contains(lowerName, "go.mod") {
 		return "Dependencies"
 	}
@@ -284,7 +248,6 @@ func (m *Manager) determinePurpose(filename, path string) string {
 		return "Build"
 	}
 
-	// Documentation
 	if strings.Contains(lowerName, "readme") || strings.Contains(lowerName, "docs") {
 		return "Documentation"
 	}
@@ -292,38 +255,112 @@ func (m *Manager) determinePurpose(filename, path string) string {
 		return "License"
 	}
 
-	// Source code
-	if strings.Contains(lowerPath, "src") || strings.Contains(lowerPath, "lib") {
-		return "Source Code"
+	if strings.Contains(lowerPath, "test") || strings.Contains(lowerName, "test") {
+		return "Testing"
 	}
-	if strings.Contains(lowerPath, "test") || strings.Contains(lowerPath, "spec") {
-		return "Tests"
-	}
-
-	// Main entry points
-	if lowerName == "main.go" || lowerName == "main.py" || lowerName == "index.js" {
+	if strings.Contains(lowerPath, "cmd") || strings.Contains(lowerName, "main") {
 		return "Entry Point"
 	}
-
-	// Database
-	if strings.Contains(lowerName, "migration") || strings.Contains(lowerPath, "db") {
-		return "Database"
+	if strings.Contains(lowerPath, "internal") {
+		return "Internal Logic"
+	}
+	if strings.Contains(lowerPath, "pkg") {
+		return "Package"
 	}
 
-	// API
-	if strings.Contains(lowerPath, "api") || strings.Contains(lowerPath, "routes") {
-		return "API"
+	return "Source Code"
+}
+
+func (m *Manager) QueryCodebase(query string) (string, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return "", fmt.Errorf("failed to load config: %w", err)
 	}
 
-	// Models
-	if strings.Contains(lowerPath, "model") || strings.Contains(lowerPath, "entity") {
-		return "Data Model"
+	client := api.NewClient(cfg.APIKey, cfg.BaseURL)
+
+	index, err := m.LoadIndex()
+	if err != nil {
+		return "", fmt.Errorf("failed to load index: %w", err)
 	}
 
-	// Utilities
-	if strings.Contains(lowerPath, "util") || strings.Contains(lowerPath, "helper") {
-		return "Utility"
+	prompt := fmt.Sprintf(`You have access to an indexed codebase. Please answer the following query based on the codebase information:
+
+Query: %s
+
+Codebase Information:
+- Total files: %d
+- Total lines: %d
+- Directories: %d
+- Languages: %s
+
+File Structure:
+%s
+
+Key Files and Their Purposes:
+%s
+
+Please provide a comprehensive answer based on the codebase structure and content.`,
+		query,
+		len(index.Files),
+		index.TotalLines,
+		index.Directories,
+		strings.Join(index.Languages, ", "),
+		formatFileStructure(index.Files),
+		formatKeyFiles(index.Files))
+
+	req := api.ChatRequest{
+		Model: cfg.Model,
+		Messages: []api.Message{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
 	}
 
-	return "General"
+	resp, err := client.SendChat(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to query codebase: %w", err)
+	}
+
+	if len(resp.Choices) > 0 {
+		return resp.Choices[0].Message.Content, nil
+	}
+
+	return "", fmt.Errorf("no response received")
+}
+
+func formatFileStructure(files []FileInfo) string {
+	var result strings.Builder
+	for _, file := range files {
+		indent := strings.Repeat("  ", strings.Count(file.Path, "/"))
+		if file.IsDir {
+			result.WriteString(fmt.Sprintf("%s📁 %s/\n", indent, file.Name))
+		} else {
+			result.WriteString(fmt.Sprintf("%s📄 %s\n", indent, file.Name))
+		}
+	}
+	return result.String()
+}
+
+func formatKeyFiles(files []FileInfo) string {
+	var result strings.Builder
+	for _, file := range files {
+		if isKeyFile(file.Name) {
+			result.WriteString(fmt.Sprintf("- %s: %s\n", file.Name, file.Purpose))
+		}
+	}
+	return result.String()
+}
+
+func isKeyFile(filename string) bool {
+	keyFiles := map[string]bool{
+		"main.go": true, "go.mod": true, "go.sum": true, "Makefile": true,
+		"README.md": true, "Dockerfile": true, "package.json": true,
+		"requirements.txt": true, "Cargo.toml": true, "pom.xml": true,
+		"build.gradle": true, "Gemfile": true, "composer.json": true,
+		"pubspec.yaml": true,
+	}
+	return keyFiles[filename]
 }

@@ -24,4 +24,5 @@ func init() {
 	rootCmd.AddCommand(filesCmd)
 	rootCmd.AddCommand(codeCmd)
 	rootCmd.AddCommand(memoryCmd)
+	rootCmd.AddCommand(versionCmd)
 }

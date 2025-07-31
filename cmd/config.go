@@ -5,106 +5,144 @@ import (
 	"strings"
 
 	"github.com/m99Tanishq/CLI/internal/config"
+	"github.com/m99Tanishq/CLI/pkg/utils"
 	"github.com/spf13/cobra"
 )
-
-var configCmd = &cobra.Command{
-	Use:   "config",
-	Short: "Manage GLM CLI configuration",
-	Long:  `Manage configuration settings for the GLM CLI tool.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		// Load current configuration
-		cfg, err := config.Load()
-		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
-			return
-		}
-
-		// Check flags
-		setFlag, _ := cmd.Flags().GetString("set")
-		getFlag, _ := cmd.Flags().GetString("get")
-		listFlag, _ := cmd.Flags().GetBool("list")
-
-		if setFlag != "" {
-			// Set configuration value
-			parts := strings.SplitN(setFlag, "=", 2)
-			if len(parts) != 2 {
-				fmt.Println("Error: Use format key=value")
-				return
-			}
-			key, value := parts[0], parts[1]
-
-			switch key {
-			case "api_key":
-				cfg.APIKey = value
-			case "model":
-				cfg.Model = value
-			case "base_url":
-				cfg.BaseURL = value
-			case "max_history":
-				// TODO: Add max_history setting
-				fmt.Printf("Setting %s = %s\n", key, value)
-			default:
-				fmt.Printf("Unknown configuration key: %s\n", key)
-				return
-			}
-
-			if err := config.Save(cfg); err != nil {
-				fmt.Printf("Error saving config: %v\n", err)
-				return
-			}
-			fmt.Printf("Configuration updated: %s = %s\n", key, value)
-
-		} else if getFlag != "" {
-			// Get configuration value
-			switch getFlag {
-			case "api_key":
-				if cfg.APIKey == "" {
-					fmt.Println("API key not set")
-				} else {
-					fmt.Printf("API key: %s\n", maskAPIKey(cfg.APIKey))
-				}
-			case "model":
-				fmt.Printf("Model: %s\n", cfg.Model)
-			case "base_url":
-				fmt.Printf("Base URL: %s\n", cfg.BaseURL)
-			case "max_history":
-				fmt.Printf("Max history: %d\n", cfg.MaxHistory)
-			default:
-				fmt.Printf("Unknown configuration key: %s\n", getFlag)
-			}
-
-		} else if listFlag {
-			// List all configuration values
-			fmt.Println("Current configuration:")
-			fmt.Printf("  API Key: %s\n", maskAPIKey(cfg.APIKey))
-			fmt.Printf("  Model: %s\n", cfg.Model)
-			fmt.Printf("  Base URL: %s\n", cfg.BaseURL)
-			fmt.Printf("  Max History: %d\n", cfg.MaxHistory)
-
-		} else {
-			// Show help
-			fmt.Println("Configuration management...")
-			fmt.Println("Use --set key=value to set a configuration value")
-			fmt.Println("Use --get key to get a configuration value")
-			fmt.Println("Use --list to show all configuration values")
-		}
-	},
-}
-
-func init() {
-	configCmd.Flags().StringP("set", "s", "", "Set a configuration value")
-	configCmd.Flags().StringP("get", "g", "", "Get a configuration value")
-	configCmd.Flags().BoolP("list", "l", false, "List all configuration values")
-}
 
 // maskAPIKey masks the API key for display
 func maskAPIKey(apiKey string) string {
 	if apiKey == "" {
-		return "not set"
+		return "Not set"
 	}
 	if len(apiKey) <= 8 {
-		return "***"
+		return strings.Repeat("*", len(apiKey))
 	}
-	return apiKey[:4] + "..." + apiKey[len(apiKey)-4:]
+	return apiKey[:4] + strings.Repeat("*", len(apiKey)-8) + apiKey[len(apiKey)-4:]
+}
+
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Manage configuration",
+	Long:  `View and modify CLI configuration settings.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
+
+		cfg, err := config.Load()
+		if err != nil {
+			ui.PrintError("Failed to load configuration")
+			return
+		}
+
+		ui.PrintHeader("Configuration")
+
+		// Print current configuration
+		ui.PrintSection("Current Settings")
+
+		ui.PrintTable([]string{"Setting", "Value"}, [][]string{
+			{"Model", cfg.Model},
+			{"API Key", maskAPIKey(cfg.APIKey)},
+			{"Base URL", cfg.BaseURL},
+			{"Max History", fmt.Sprintf("%d", cfg.MaxHistory)},
+			{"Max Tokens", fmt.Sprintf("%d", cfg.MaxTokens)},
+			{"Temperature", fmt.Sprintf("%.2f", cfg.Temperature)},
+		})
+
+		ui.PrintInfo("Use 'CLI config set <key> <value>' to modify settings")
+		ui.PrintInfo("Available keys: model, api_key, base_url, max_history, max_tokens, temperature")
+	},
+}
+
+var setCmd = &cobra.Command{
+	Use:   "set [key] [value]",
+	Short: "Set a configuration value",
+	Args:  cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
+
+		key := args[0]
+		value := args[1]
+
+		err := config.Set(key, value)
+		if err != nil {
+			ui.PrintError(fmt.Sprintf("Failed to set %s: %v", key, err))
+			return
+		}
+
+		ui.PrintSuccess(fmt.Sprintf("Successfully set %s to %s", key, value))
+
+		// Show updated configuration
+		cfg, err := config.Load()
+		if err != nil {
+			ui.PrintError("Failed to load updated configuration")
+			return
+		}
+
+		ui.PrintSection("Updated Configuration")
+		ui.PrintTable([]string{"Setting", "Value"}, [][]string{
+			{"Model", cfg.Model},
+			{"API Key", maskAPIKey(cfg.APIKey)},
+			{"Base URL", cfg.BaseURL},
+			{"Max Tokens", fmt.Sprintf("%d", cfg.MaxTokens)},
+			{"Temperature", fmt.Sprintf("%.2f", cfg.Temperature)},
+		})
+	},
+}
+
+var listConfigCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List current configuration",
+	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
+
+		cfg, err := config.Load()
+		if err != nil {
+			ui.PrintError("Failed to load configuration")
+			return
+		}
+
+		ui.PrintHeader("Current Configuration")
+
+		ui.PrintTable([]string{"Setting", "Value"}, [][]string{
+			{"Model", cfg.Model},
+			{"API Key", maskAPIKey(cfg.APIKey)},
+			{"Base URL", cfg.BaseURL},
+			{"Max History", fmt.Sprintf("%d", cfg.MaxHistory)},
+			{"Max Tokens", fmt.Sprintf("%d", cfg.MaxTokens)},
+			{"Temperature", fmt.Sprintf("%.2f", cfg.Temperature)},
+		})
+	},
+}
+
+var resetCmd = &cobra.Command{
+	Use:   "reset",
+	Short: "Reset configuration to defaults",
+	Run: func(cmd *cobra.Command, args []string) {
+		ui := utils.NewModernUI()
+
+		// Create default configuration
+		defaultConfig := config.DefaultConfig()
+		err := config.Save(defaultConfig)
+		if err != nil {
+			ui.PrintError("Failed to reset configuration")
+			return
+		}
+
+		ui.PrintSuccess("Configuration reset to defaults")
+
+		ui.PrintSection("Default Settings")
+		ui.PrintTable([]string{"Setting", "Value"}, [][]string{
+			{"Model", defaultConfig.Model},
+			{"API Key", maskAPIKey(defaultConfig.APIKey)},
+			{"Base URL", defaultConfig.BaseURL},
+			{"Max History", fmt.Sprintf("%d", defaultConfig.MaxHistory)},
+			{"Max Tokens", fmt.Sprintf("%d", defaultConfig.MaxTokens)},
+			{"Temperature", fmt.Sprintf("%.2f", defaultConfig.Temperature)},
+		})
+	},
+}
+
+func init() {
+	configCmd.AddCommand(setCmd)
+	configCmd.AddCommand(listConfigCmd)
+	configCmd.AddCommand(resetCmd)
 }
