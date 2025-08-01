@@ -3,8 +3,7 @@
     <name>Rzork CLI Assistant</name>
     <vendor email="support@rzork.com" url="https://github.com/rzork/cli">Rzork</vendor>
 
-    <description><![CDATA[
-    <h2>Rzork CLI Assistant - AI-Powered Development Tool</h2>
+    <description><![CDATA[<h2>Rzork CLI Assistant - AI-Powered Development Tool</h2>
     <p>The ultimate AI-powered development assistant for IntelliJ IDEA, featuring blazing-fast performance and intelligent code analysis.</p>
     
     <h3>Key Features</h3>
