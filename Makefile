@@ -18,12 +18,12 @@ test-full: test check
 
 # Build for all platforms
 build-all:
-	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-linux-amd64 .
-	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-linux-arm64 .
-	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-darwin-arm64 .
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-windows-amd64.exe .
-	GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=dev" -o CLI-windows-arm64.exe .
+	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-linux-amd64 .
+	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-linux-arm64 .
+	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-darwin-amd64 .
+	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-darwin-arm64 .
+	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-windows-amd64.exe .
+	GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X github.com/m99Tanishq/CLI/cmd.Version=v1.0.3" -o CLI-windows-arm64.exe .
 
 # Install globally (to ~/go/bin/)
 install:
