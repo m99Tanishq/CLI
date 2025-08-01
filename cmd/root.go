@@ -6,8 +6,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "CLI",
-	Short: "A CLI tool for interacting with GLM models",
-	Long: `GLM CLI is a command-line interface for interacting with GLM (General Language Model) APIs.
+	Short: "A CLI tool for interacting with Rzork models",
+	Long: `Rzork CLI is a command-line interface for interacting with Rzork (General Language Model) APIs.
 It provides features for chat, configuration management, and conversation history.`,
 }
 

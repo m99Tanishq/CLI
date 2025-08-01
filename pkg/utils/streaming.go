@@ -76,6 +76,7 @@ type Spinner struct {
 	index  int
 	stop   chan bool
 	ui     *ModernUI
+	closed bool
 }
 
 func NewSpinner() *Spinner {
@@ -105,7 +106,10 @@ func (s *Spinner) Start(message string) {
 }
 
 func (s *Spinner) Stop() {
-	close(s.stop)
+	if !s.closed {
+		close(s.stop)
+		s.closed = true
+	}
 }
 
 type StreamingHandler struct {
@@ -138,7 +142,7 @@ func (sh *StreamingHandler) HandleStream(chunkChan <-chan string, errChan <-chan
 				sh.ui.End()
 				fmt.Println()
 				os.Stdout.Sync()
-				return sh.response.String(), nil
+				return CleanResponse(sh.response.String()), nil
 			}
 
 			if !hasReceivedChunk {
@@ -157,7 +161,7 @@ func (sh *StreamingHandler) HandleStream(chunkChan <-chan string, errChan <-chan
 					sh.spinner.Stop()
 				}
 				sh.ui.End()
-				return sh.response.String(), err
+				return CleanResponse(sh.response.String()), err
 			}
 
 		case <-sh.ui.GetContext().Done():

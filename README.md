@@ -1,4 +1,4 @@
-# 🚀 CLI - AI-Powered Development Assistant
+# 🚀 Rzork CLI - AI-Powered Development Assistant
 
 > **The ultimate command-line interface for AI-powered development, featuring blazing-fast performance and intelligent code analysis.**
 
@@ -7,7 +7,7 @@
 [![Release](https://img.shields.io/badge/Release-v1.0.3-orange.svg)](https://github.com/m99Tanishq/CLI/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey.svg)](https://github.com/m99Tanishq/CLI/releases)
 
-**CLI** is a high-performance, AI-powered development assistant that brings the power of large language models to your terminal. Built with Go and optimized for speed, it provides intelligent code analysis, real-time chat, and comprehensive codebase management.
+**Rzork CLI** is a high-performance, AI-powered development assistant that brings the power of large language models to your terminal. Built with Go and optimized for speed, it provides intelligent code analysis, real-time chat, and comprehensive codebase management.
 
 ## ✨ Key Features
 
@@ -179,7 +179,7 @@ export CLI_MODEL="zai-org/GLM-4.5:novita"
 
 ## 📊 Performance Benchmarks
 
-| Operation | v1.0.2 | v1.0.3 | Improvement |
+| Operation | v1.0.1 | v1.0.3 | Improvement |
 |-----------|--------|--------|-------------|
 | **Startup Time** | 2.1s | 1.7s | ⚡ 20% faster |
 | **Memory Usage** | 65MB | 55MB | 💾 15% less |
@@ -239,7 +239,25 @@ make dev
 
 # Full quality check
 make check
+
+# Sync local and global CLI binaries
+make sync
 ```
+
+### **Binary Synchronization**
+To ensure that `./CLI` (local) and `CLI` (global) work identically:
+
+```bash
+# Sync both binaries (recommended after changes)
+make sync
+
+# Or use the sync script directly
+./scripts/sync-cli.sh
+```
+
+This ensures that both commands provide the same functionality:
+- `./CLI` - works from the project directory
+- `CLI` - works from anywhere (requires global installation)
 
 ## 🌍 Platform Support
 

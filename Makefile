@@ -1,4 +1,4 @@
-.PHONY: build clean test release build-all
+.PHONY: build clean test release build-all sync
 
 # Build the application
 build:
@@ -81,6 +81,10 @@ dev:
 deps:
 	go mod tidy
 	go mod download
+
+# Sync local and global CLI binaries
+sync:
+	./scripts/sync-cli.sh
 
 # Create a new release
 release-version:

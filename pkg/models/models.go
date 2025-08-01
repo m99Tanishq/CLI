@@ -14,7 +14,7 @@ type ChatRequest struct {
 	// Removed Provider field
 }
 
-// ChatResponse represents a response from the GLM API
+// ChatResponse represents a response from the Rzork API
 type ChatResponse struct {
 	ID      string   `json:"id"`
 	Object  string   `json:"object"`

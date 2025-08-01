@@ -15,7 +15,7 @@ public final class RzorkCliService {
     public RzorkCliService() {
         // Initialize with default values
         this.apiKey = "";
-        this.model = "zai-org/GLM-4.5:novita";
+        this.model = "zai-org/Rzork-4.5:novita";
         this.baseUrl = "https://router.huggingface.co/v1/chat/completions";
     }
     

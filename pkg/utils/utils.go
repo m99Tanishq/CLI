@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -43,10 +44,10 @@ func GenerateSessionTitle(content string) string {
 
 func IsValidModel(model string) bool {
 	validModels := map[string]bool{
-		"glm-4":       true,
-		"glm-3-turbo": true,
-		"glm-4v":      true,
-		"cogview-3":   true,
+		"Rzork-4":       true,
+		"Rzork-3-turbo": true,
+		"Rzork-4v":      true,
+		"cogview-3":     true,
 	}
 	return validModels[model]
 }
@@ -72,4 +73,24 @@ func FormatDuration(d time.Duration) string {
 		return fmt.Sprintf("%dm %ds", int(d.Minutes()), int(d.Seconds())%60)
 	}
 	return fmt.Sprintf("%dh %dm", int(d.Hours()), int(d.Minutes())%60)
+}
+
+// CleanResponse removes think tags and other unwanted content from AI responses
+func CleanResponse(content string) string {
+	// Remove <think>...</think> tags and their content
+	thinkPattern := regexp.MustCompile(`(?s)<think>.*?</think>`)
+	content = thinkPattern.ReplaceAllString(content, "")
+
+	// Remove any remaining think tags without content
+	content = strings.ReplaceAll(content, "<think>", "")
+	content = strings.ReplaceAll(content, "</think>", "")
+
+	// Clean up extra whitespace but preserve spaces between words
+	content = strings.TrimSpace(content)
+
+	// Remove multiple consecutive newlines
+	newlinePattern := regexp.MustCompile(`\n\s*\n\s*\n`)
+	content = newlinePattern.ReplaceAllString(content, "\n\n")
+
+	return content
 }

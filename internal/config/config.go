@@ -107,7 +107,7 @@ func getConfigPath() (string, error) {
 		return "", fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	return filepath.Join(homeDir, ".glm-cli", "config.json"), nil
+	return filepath.Join(homeDir, ".Rzork-cli", "config.json"), nil
 }
 
 // Set sets a configuration value

@@ -133,6 +133,8 @@ func handleRegularChat(client *api.Client, req api.ChatRequest, start time.Time,
 
 	if len(resp.Choices) > 0 {
 		assistantMessage := resp.Choices[0].Message
+		// Clean the response content
+		assistantMessage.Content = utils.CleanResponse(assistantMessage.Content)
 		ui.PrintChatMessage("assistant", assistantMessage.Content)
 
 		duration := time.Since(start)

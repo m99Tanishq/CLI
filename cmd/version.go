@@ -10,7 +10,7 @@ var Version = "dev"
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show version information",
-	Long:  `Display the current version of GLM CLI and its capabilities.`,
+	Long:  `Display the current version of Rzork CLI and its capabilities.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ui := utils.NewModernUI()
 
